@@ -7,7 +7,7 @@ import Company from "@/components/company-call";
 import Invoice from "@/components/invoice-call";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("checks");
+  const [activeTab, setActiveTab] = useState("companies");
 
   return (
     <div className="container mx-auto px-4 py-6">

@@ -44,6 +44,7 @@ import {
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import baseUrl from "@/api/baseUrl";
+import { useRouter } from "next/navigation";
 
 interface Check {
   id: number;
@@ -60,13 +61,14 @@ const queryClient = new QueryClient();
 
 // Wrap the CheckContent component with QueryClientProvider
 const Check = () => {
+  
   return (
     <QueryClientProvider client={queryClient}>
       <CheckContent />
     </QueryClientProvider>
   );
 };
-
+const router = useRouter();
 // The actual component content
 const CheckContent = () => {
   const queryClient = useQueryClient();
@@ -119,6 +121,7 @@ const CheckContent = () => {
         position: "top-right",
       });
       resetForm();
+      router.push("/checks");
     },
     onError: (error) => {
       console.error(error);
@@ -360,10 +363,10 @@ const CheckContent = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {check.image_url && check.image_url !== "/placeholder.svg" ? (
+                  {check.image_url && check.image_url !== "https://images.unsplash.com/photo-1627519374433-e30c530696ea?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" ? (
                     <div className="relative group">
                       <img
-                        src={check.image_url || "/placeholder.svg"} // Fallback if URL is empty
+                        src={check.image_url || "https://images.unsplash.com/photo-1627519374433-e30c530696ea?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} // Fallback if URL is empty
                         alt={`Check ${check.number}`}
                         className="w-full h-32 object-cover rounded-md mb-2"
                       />
