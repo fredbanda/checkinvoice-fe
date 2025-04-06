@@ -373,7 +373,7 @@ const CheckContent = () => {
 
                 <CardContent>
                   <Dialog>
-                    <DialogTitle>Check Image</DialogTitle>
+                    <DialogTitle className="sr-only">Check Image</DialogTitle>
                     <DialogTrigger asChild>
                       {check.image_url &&
                       check.image_url !== "/placeholder.svg" ? (
