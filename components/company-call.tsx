@@ -59,7 +59,6 @@ console.log(setIsLoading, setError);
                     <tr>
                       <th className="p-3 text-left">Name</th>
                       <th className="p-3 text-left">Invoices</th>
-                      <th className="p-3 text-left">Checks</th>
                       <th className="p-3 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -75,7 +74,6 @@ console.log(setIsLoading, setError);
                         <tr key={company.id} className="border-b hover:bg-gray-50">
                           <td className="p-3 font-medium">{company.name}</td>
                           <td className="p-3">{invoicesData?.filter((invoice: any) => invoice.company_id === company.id).length}</td>
-                          <td className="p-3">{checksData?.filter((chk: any) => chk.company_id === company.id).length}</td>
                           <td className="p-3 text-right">
                             <Button variant="ghost" size="sm">
                               Edit

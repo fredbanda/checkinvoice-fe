@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,7 +62,6 @@ const queryClient = new QueryClient();
 
 // Wrap the CheckContent component with QueryClientProvider
 const Check = () => {
-  
   return (
     <QueryClientProvider client={queryClient}>
       <CheckContent />
@@ -108,12 +108,20 @@ const CheckContent = () => {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to save check");
+    
+      const contentType = response.headers.get("content-type");
+      const isJson = contentType?.includes("application/json");
+    
+      let data = null;
+      if (isJson) {
+        data = await response.json();
       }
-
-      return response.json();
+    
+      if (!response.ok) {
+        throw new Error(data?.errors?.join(", ") || "Failed to save check");
+      }
+    
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checks"] });
@@ -121,7 +129,7 @@ const CheckContent = () => {
         position: "top-right",
       });
       resetForm();
-      router.push("/checks");
+      router.push("/");
     },
     onError: (error) => {
       console.error(error);
@@ -362,27 +370,42 @@ const CheckContent = () => {
                     }
                   </CardDescription>
                 </CardHeader>
+
                 <CardContent>
-                  {check.image_url && check.image_url !== "https://images.unsplash.com/photo-1627519374433-e30c530696ea?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" ? (
-                    <div className="relative group">
+                  <Dialog>
+                    <DialogTitle>Check Image</DialogTitle>
+                    <DialogTrigger asChild>
+                      {check.image_url &&
+                      check.image_url !== "/placeholder.svg" ? (
+                        <div className="relative group cursor-pointer">
+                          <img
+                            src={check.image_url || "/placeholder.svg"}
+                            alt={`Check ${check.number}`}
+                            className="w-full h-32 object-cover rounded-md mb-2"
+                          />
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-md">
+                            <Button variant="secondary" size="sm">
+                              View Full Image
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-32 bg-muted rounded-md flex items-center justify-center mb-2">
+                          <p className="text-muted-foreground text-sm">
+                            No image available
+                          </p>
+                        </div>
+                      )}
+                    </DialogTrigger>
+
+                    <DialogContent className="p-0">
                       <img
-                        src={check.image_url || "https://images.unsplash.com/photo-1627519374433-e30c530696ea?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} // Fallback if URL is empty
-                        alt={`Check ${check.number}`}
-                        className="w-full h-32 object-cover rounded-md mb-2"
+                        src={check.image_url}
+                        alt={`Full picture of Check ${check.number}`}
+                        className="w-full h-auto rounded-md"
                       />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-md">
-                        <Button variant="secondary" size="sm">
-                          View Full Image
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-32 bg-muted rounded-md flex items-center justify-center mb-2">
-                      <p className="text-muted-foreground text-sm">
-                        No image available
-                      </p>
-                    </div>
-                  )}
+                    </DialogContent>
+                  </Dialog>
 
                   {check.invoices?.length > 0 && (
                     <div className="mt-2">
@@ -399,6 +422,7 @@ const CheckContent = () => {
                     </div>
                   )}
                 </CardContent>
+
                 <CardFooter className="pt-0">
                   <Button
                     variant="outline"
