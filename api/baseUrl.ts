@@ -1,7 +1,7 @@
 const baseUrls = {
-    development: "https://market-link-0czv.onrender.com/api/v1/",
+    development: "http://localhost:3000/api/v1/",
     staging: "",
-    production: "https://market-link-0czv.onrender.com/api/v1/",
+    production: "https://market-link-spew.onrender.com/api/v1/checks",
     test: "",
 };
 
@@ -10,9 +10,9 @@ const baseUrl = baseUrls[process.env.NODE_ENV || "development"];
 export default baseUrl;
 
   const storageBaseUrls = {
-    development: "https://market-link-0czv.onrender.com/api/v1/",
+    development: "http://localhost:3000/api/v1/",
     staging: "",
-    production: "https://market-link-0czv.onrender.com/api/v1/",
+    production: "https://market-link-spew.onrender.com/api/v1/checks",
     test: "",
   };
   

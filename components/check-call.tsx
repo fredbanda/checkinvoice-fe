@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import baseUrl from "@/api/baseUrl";
 
 interface Check {
   id: number;
@@ -101,7 +102,7 @@ const CheckContent = () => {
   // Mutations
   const createCheckMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await fetch("https://market-link-0czv.onrender.com/api/v1/checks", {
+      const response = await fetch(`${baseUrl}/checks`, {
         method: "POST",
         body: formData,
       });
@@ -136,7 +137,7 @@ const CheckContent = () => {
       invoiceIds: number[];
     }) => {
       const response = await fetch(
-        `https://market-link-0czv.onrender.com/api/v1/checks/${checkId}/link_invoices`,
+        `${baseUrl}/checks/${checkId}/link_invoices`,
         {
           method: "POST",
           headers: {

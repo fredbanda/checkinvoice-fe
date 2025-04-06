@@ -42,6 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import baseUrl from "@/api/baseUrl";
 
 interface Invoice {
   id: number;
@@ -94,7 +95,7 @@ const Invoice = () => {
   // Mutations for CRUD operations
   const createInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
-      return fetch("https://market-link-0czv.onrender.com/api/v1/invoices", {
+      return fetch(`${baseUrl}/invoices`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +122,7 @@ const Invoice = () => {
   const updateInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
       return fetch(
-        `https://market-link-0czv.onrender.com/api/v1/invoices/${currentInvoice?.id}`,
+        `${baseUrl}/invoices/${currentInvoice?.id}`,
         {
           method: "PUT",
           headers: {
@@ -151,7 +152,7 @@ const Invoice = () => {
 
   const deleteInvoiceMutation = useMutation({
     mutationFn: (id: number) => {
-      return fetch(`https://market-link-0czv.onrender.com/api/v1/invoices/${id}`, {
+      return fetch(`${baseUrl}/invoices/${id}`, {
         method: "DELETE",
       }).then((res) => {
         if (!res.ok) throw new Error("Failed to delete invoice");
