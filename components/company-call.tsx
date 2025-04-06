@@ -30,11 +30,6 @@ const Company = () => {
         queryFn: apiRouter.company.getCompanies,
       });
 
-      const { data: checksData} = useQuery({
-        queryKey: ["checks"],
-        queryFn: apiRouter.check.getChecks,
-      });
-
 console.log(setIsLoading, setError);
 
 
