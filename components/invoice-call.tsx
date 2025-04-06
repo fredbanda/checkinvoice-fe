@@ -95,7 +95,7 @@ const Invoice = () => {
   // Mutations for CRUD operations
   const createInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
-      return fetch(`${baseUrl}/invoices`, {
+      return fetch(`${baseUrl}invoices`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const Invoice = () => {
   const updateInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
       return fetch(
-        `${baseUrl}/invoices/${currentInvoice?.id}`,
+        `${baseUrl}invoices/${currentInvoice?.id}`,
         {
           method: "PUT",
           headers: {
@@ -152,7 +152,7 @@ const Invoice = () => {
 
   const deleteInvoiceMutation = useMutation({
     mutationFn: (id: number) => {
-      return fetch(`${baseUrl}/invoices/${id}`, {
+      return fetch(`${baseUrl}invoices/${id}`, {
         method: "DELETE",
       }).then((res) => {
         if (!res.ok) throw new Error("Failed to delete invoice");

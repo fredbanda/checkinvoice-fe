@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
+import baseUrl from "@/api/baseUrl"
 
 export function CompanyModal() {
   const [open, setOpen] = useState(false)
@@ -39,7 +40,7 @@ export function CompanyModal() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("https://market-link-0czv.onrender.com/api/v1/companies", {
+      const response = await fetch(`${baseUrl}companies`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

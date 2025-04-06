@@ -102,7 +102,7 @@ const CheckContent = () => {
   // Mutations
   const createCheckMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await fetch(`${baseUrl}/checks`, {
+      const response = await fetch(`${baseUrl}checks`, {
         method: "POST",
         body: formData,
       });
@@ -137,7 +137,7 @@ const CheckContent = () => {
       invoiceIds: number[];
     }) => {
       const response = await fetch(
-        `${baseUrl}/checks/${checkId}/link_invoices`,
+        `${baseUrl}checks/${checkId}/link_invoices`,
         {
           method: "POST",
           headers: {
