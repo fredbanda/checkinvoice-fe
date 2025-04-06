@@ -68,7 +68,7 @@ const Check = () => {
     </QueryClientProvider>
   );
 };
-const router = useRouter();
+
 // The actual component content
 const CheckContent = () => {
   const queryClient = useQueryClient();
@@ -84,7 +84,7 @@ const CheckContent = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const router = useRouter();
   // Queries
   const { data: checksData, isLoading: checksLoading } = useQuery({
     queryKey: ["checks"],
