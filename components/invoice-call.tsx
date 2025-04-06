@@ -94,7 +94,7 @@ const Invoice = () => {
   // Mutations for CRUD operations
   const createInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
-      return fetch("http://localhost:3000/api/v1/invoices", {
+      return fetch("https://market-link-0czv.onrender.com/api/v1/invoices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +121,7 @@ const Invoice = () => {
   const updateInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
       return fetch(
-        `http://localhost:3000/api/v1/invoices/${currentInvoice?.id}`,
+        `https://market-link-0czv.onrender.com/api/v1/invoices/${currentInvoice?.id}`,
         {
           method: "PUT",
           headers: {
@@ -151,7 +151,7 @@ const Invoice = () => {
 
   const deleteInvoiceMutation = useMutation({
     mutationFn: (id: number) => {
-      return fetch(`http://localhost:3000/api/v1/invoices/${id}`, {
+      return fetch(`https://market-link-0czv.onrender.com/api/v1/invoices/${id}`, {
         method: "DELETE",
       }).then((res) => {
         if (!res.ok) throw new Error("Failed to delete invoice");

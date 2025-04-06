@@ -101,7 +101,7 @@ const CheckContent = () => {
   // Mutations
   const createCheckMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await fetch("http://localhost:3000/api/v1/checks", {
+      const response = await fetch("https://market-link-0czv.onrender.com/api/v1/checks", {
         method: "POST",
         body: formData,
       });
@@ -136,7 +136,7 @@ const CheckContent = () => {
       invoiceIds: number[];
     }) => {
       const response = await fetch(
-        `http://localhost:3000/api/v1/checks/${checkId}/link_invoices`,
+        `https://market-link-0czv.onrender.com/api/v1/checks/${checkId}/link_invoices`,
         {
           method: "POST",
           headers: {

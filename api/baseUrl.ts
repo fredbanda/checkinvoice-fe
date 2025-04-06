@@ -1,5 +1,5 @@
 const baseUrls = {
-    development: "http://localhost:3000/api/v1/",
+    development: "https://market-link-0czv.onrender.com/api/v1/",
     staging: "",
     production: "https://market-link-0czv.onrender.com/api/v1/",
     test: "",
@@ -10,7 +10,7 @@ const baseUrl = baseUrls[process.env.NODE_ENV || "development"];
 export default baseUrl;
 
   const storageBaseUrls = {
-    development: "http://localhost:3000",
+    development: "https://market-link-0czv.onrender.com/api/v1/",
     staging: "",
     production: "https://market-link-0czv.onrender.com/api/v1/",
     test: "",
