@@ -1,7 +1,7 @@
 const baseUrls = {
     development: "http://localhost:3000/api/v1/",
     staging: "",
-    production: "",
+    production: "https://market-link-0czv.onrender.com/api/v1/",
     test: "",
 };
 
@@ -12,7 +12,7 @@ export default baseUrl;
   const storageBaseUrls = {
     development: "http://localhost:3000",
     staging: "",
-    production: "",
+    production: "https://market-link-0czv.onrender.com/api/v1/",
     test: "",
   };
   
