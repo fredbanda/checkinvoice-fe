@@ -108,28 +108,37 @@ const CheckContent = () => {
         method: "POST",
         body: formData,
       });
-  
-      let data;
-      try {
-        data = await response.json();
-      } catch (error) {
-        console.error(error);
-        throw new Error("Invalid JSON response from server");
-        
+      
+      // Check if response is ok first
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+          throw new Error(errorData?.errors?.join(", ") || "Failed to save check");
+        } catch (jsonError) {
+          console.log(jsonError);
+          
+          throw new Error("Failed to save check");
+        }
       }
       
-  
-      if (!response.ok) {
-        throw new Error(data?.errors?.join(", ") || "Failed to save check");
+      // Only try to parse JSON if response was successful
+      try {
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(error);
+        // The check was saved successfully but JSON parsing failed
+        return { success: true, message: "Check saved successfully" };
       }
-  
-      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["checks"] });
       toast.success("Check saved", {
         position: "top-right",
       });
+      console.log(data);
+      
       resetForm();
       router.push("/");
     },
@@ -140,7 +149,6 @@ const CheckContent = () => {
       });
     },
   });
-  
 
   const linkInvoicesMutation = useMutation({
     mutationFn: async ({
