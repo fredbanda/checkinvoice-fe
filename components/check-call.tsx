@@ -108,19 +108,21 @@ const CheckContent = () => {
         method: "POST",
         body: formData,
       });
-    
-      const contentType = response.headers.get("content-type");
-      const isJson = contentType?.includes("application/json");
-    
-      let data = null;
-      if (isJson) {
+  
+      let data;
+      try {
         data = await response.json();
+      } catch (error) {
+        console.error(error);
+        throw new Error("Invalid JSON response from server");
+        
       }
-    
+      
+  
       if (!response.ok) {
         throw new Error(data?.errors?.join(", ") || "Failed to save check");
       }
-    
+  
       return data;
     },
     onSuccess: () => {
@@ -133,11 +135,12 @@ const CheckContent = () => {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Error saving check. Please try again.", {
+      toast.error(error.message || "Error saving check. Please try again.", {
         position: "top-right",
       });
     },
   });
+  
 
   const linkInvoicesMutation = useMutation({
     mutationFn: async ({
