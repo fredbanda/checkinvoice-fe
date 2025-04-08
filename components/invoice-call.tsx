@@ -111,6 +111,7 @@ const Invoice = () => {
       toast.success("Success Invoice created successfully", {});
       handleCloseForm();
     },
+   
     onError: (error) => {
       toast.error("ErrorFailed to create invoice", {
         position: "top-right",
@@ -118,6 +119,8 @@ const Invoice = () => {
       console.log(error)
     },
   });
+
+  window.location.reload();
 
   const updateInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {

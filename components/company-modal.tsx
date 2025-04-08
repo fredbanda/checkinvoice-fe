@@ -61,10 +61,11 @@ export function CompanyModal() {
       toast.success("Company created successfully", {
         position: "top-right",
       })
-
+      window.location.reload();
       // Reset form and close modal
       setName("")
       setOpen(false)
+      
     } catch (error) {
       toast.error("Error creating company: " , {
         position: "top-right",
