@@ -45,7 +45,6 @@ import {
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import baseUrl from "@/api/baseUrl";
-import { useRouter } from "next/navigation";
 
 interface Check {
   id: number;
@@ -84,7 +83,6 @@ const CheckContent = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const router = useRouter();
   // Queries
   const { data: checksData, isLoading: checksLoading } = useQuery({
     queryKey: ["checks"],
@@ -102,53 +100,118 @@ const CheckContent = () => {
   });
 
   // Mutations
-  const createCheckMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
+  // Camera handling functions
+const handleCameraCapture = () => {
+  if (canvasRef.current && videoRef.current) {
+    const context = canvasRef.current.getContext('2d');
+    if (context) {
+      context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+      const imageData = canvasRef.current.toDataURL('image/png');
+      setCapturedImage(imageData);
+      
+      // Turn off the camera
+      stopCamera();
+    }
+  }
+};
+
+// Helper function to stop camera
+const stopCamera = () => {
+  setCameraActive(false);
+  if (videoRef.current?.srcObject) {
+    const stream = videoRef.current.srcObject as MediaStream;
+    stream.getTracks().forEach(track => track.stop());
+    videoRef.current.srcObject = null;
+  }
+};
+
+// Reset form function
+const resetForm = () => {
+  setSelectedCompany(0);
+  setCheckNumber('');
+  setCapturedImage(null);
+  stopCamera();
+};
+
+// Use effect to ensure camera is stopped when dialog closes
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+useEffect(() => {
+  // Turn off camera when dialog closes
+  if (!isAddDialogOpen) {
+    stopCamera();
+  }
+}, [isAddDialogOpen]);
+
+// Mutation for creating a check
+const createCheckMutation = useMutation({
+  mutationFn: async (formData: FormData) => {
+    try {
       const response = await fetch(`${baseUrl}checks`, {
         method: "POST",
         body: formData,
       });
       
-      // Check if response is ok first
-      if (!response.ok) {
-        let errorData;
+      // Store the response text first
+      const responseText = await response.text();
+      
+      // Check if response is not ok
+      if (!response.ok && response.status !== 201) {
+        let errorMessage = "Failed to save check";
+        
+        // Try to parse as JSON if there's content
+        if (responseText.trim()) {
+          try {
+            const errorData = JSON.parse(responseText);
+            if (errorData?.errors && errorData.errors.length > 0) {
+              errorMessage = errorData.errors.join(", ");
+            }
+          } catch (e) {
+            console.log(e);
+            
+            errorMessage = responseText;
+          }
+        }
+        throw new Error(errorMessage);
+      }
+      
+      if (responseText.trim()) {
         try {
-          errorData = await response.json();
-          throw new Error(errorData?.errors?.join(", ") || "Failed to save check");
-        } catch (jsonError) {
-          console.log(jsonError);
+          return JSON.parse(responseText);
+        } catch (e) {
+          console.log(e);
           
-          throw new Error("Failed to save check");
+          console.warn("Server returned success but invalid JSON:", responseText);
         }
       }
       
-      // Only try to parse JSON if response was successful
-      try {
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error(error);
-        // The check was saved successfully but JSON parsing failed
-        return { success: true, message: "Check saved successfully" };
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["checks"] });
-      toast.success("Check saved", {
-        position: "top-right",
-      });
-      console.log(data);
-      
-      resetForm();
-      router.push("/");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error(error.message || "Error saving check. Please try again.", {
-        position: "top-right",
-      });
-    },
-  });
+      // Default successful response if JSON parsing failed
+      return { success: true, message: "Check saved successfully" };
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
+    }
+  },
+  
+  onSuccess: (data) => {
+    queryClient.invalidateQueries({ queryKey: ["checks"] });
+    toast.success("Check saved", {
+      position: "top-right",
+    });
+    console.log(data);
+
+    // Reset form and camera
+    resetForm();
+    window.location.reload();
+
+  },
+  
+  onError: (error: Error) => {
+    console.error("Error in mutation:", error);
+    toast.error(error.message || "Error saving check. Please try again.", {
+      position: "top-right",
+    });
+  },
+});
 
   const linkInvoicesMutation = useMutation({
     mutationFn: async ({
@@ -238,16 +301,6 @@ const CheckContent = () => {
     return new File([u8arr], filename, { type: mime });
   }
 
-  const handleCameraCapture = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    const ctx = canvasRef.current.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(videoRef.current, 0, 0, 400, 200);
-    const imageData = canvasRef.current.toDataURL("image/png");
-    setCapturedImage(imageData);
-    setCameraActive(false);
-  };
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -281,12 +334,6 @@ const CheckContent = () => {
     formData.append("check[image]", file);
 
     createCheckMutation.mutate(formData);
-  };
-
-  const resetForm = () => {
-    setCapturedImage(null);
-    setCheckNumber("");
-    setIsAddDialogOpen(false);
   };
 
   const openLinkDialog = (check: any) => {
@@ -469,9 +516,10 @@ const CheckContent = () => {
                 <Select
                   value={selectedCompany.toString()}
                   onValueChange={(value) => setSelectedCompany(Number(value))}
+                 
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select company" />
+                    <SelectValue placeholder="Select company" className="w-full" />
                   </SelectTrigger>
                   <SelectContent>
                     {companiesLoading ? (
@@ -489,6 +537,7 @@ const CheckContent = () => {
                   </SelectContent>
                 </Select>
               </div>
+             
 
               <div className="grid gap-2">
                 <Label htmlFor="check-number">Check Number</Label>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Check from "@/components/check-call";
 import Company from "@/components/company-call";
 import Invoice from "@/components/invoice-call";
+import FAQSection from "@/components/faq-section";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("checks");
@@ -23,16 +24,16 @@ export default function Home() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="companies">Companies</TabsTrigger>
-
           <TabsTrigger value="invoices">Invoices</TabsTrigger>
-                    <TabsTrigger value="checks">Checks</TabsTrigger>
+          <TabsTrigger value="checks">Checks</TabsTrigger>
+          <TabsTrigger value="faq-section">FAQs</TabsTrigger>
         </TabsList>
 
         {activeTab === "companies" && <Company />}
         {activeTab === "invoices" && <Invoice />}
         {activeTab === "checks" && <Check />}
+        {activeTab === "faq-section" && <FAQSection />}
       </Tabs>
     </div>
   );
 }
-
