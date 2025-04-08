@@ -120,8 +120,6 @@ const Invoice = () => {
     },
   });
 
-  window.location.reload();
-
   const updateInvoiceMutation = useMutation({
     mutationFn: (data: Partial<Invoice>) => {
       return fetch(
