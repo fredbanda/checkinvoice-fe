@@ -213,49 +213,59 @@ const createCheckMutation = useMutation({
   },
 });
 
-  const linkInvoicesMutation = useMutation({
-    mutationFn: async ({
-      checkId,
-      invoiceIds,
-    }: {
-      checkId: number;
-      invoiceIds: number[];
-    }) => {
-      const response = await fetch(
-        `${baseUrl}checks/${checkId}/link_invoices`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ invoice_ids: invoiceIds }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to link invoices");
+const linkInvoicesMutation = useMutation({
+  mutationFn: async ({
+    checkId,
+    invoiceIds,
+  }: {
+    checkId: number;
+    invoiceIds: number[];
+  }) => {
+    const response = await fetch(
+      `${baseUrl}checks/${checkId}/link_invoices`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ invoice_ids: invoiceIds }),
       }
+    );
 
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["checks"] });
-      toast.success(
-        "Invoices linked,Invoices have been successfully linked to the check.",
-        {
-          position: "top-right",
-        }
-      );
-      setIsLinkDialogOpen(false);
-      setSelectedInvoices([]);
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Error linking invoices. Please try again.", {
-        position: "top-right",
-      });
-    },
-  });
+    if (!response.ok) {
+      throw new Error("Failed to link invoices");
+    }
+
+    return response.json();
+  },
+  onSuccess: (_data, variables) => {
+    const invoiceCount = variables.invoiceIds.length;
+    // const messageTitle =
+    //   invoiceCount === 1
+    //     ? "1 invoice linked"
+    //     : `${invoiceCount} invoices linked`;
+    const messageBody =
+      invoiceCount === 1
+        ? "An invoice has been successfully linked to the check."
+        : `${invoiceCount} Invoices have been successfully linked to the check.`;
+
+    queryClient.invalidateQueries({ queryKey: ["checks"] });
+
+    toast.success(`${messageBody}`, {
+      position: "top-right",
+    });
+
+    setIsLinkDialogOpen(false);
+    setSelectedInvoices([]);
+  },
+  onError: (error) => {
+    console.error(error);
+    toast.error("Error linking invoices. Please try again.", {
+      position: "top-right",
+    });
+  },
+});
+
 
   // Camera handling
   useEffect(() => {
